@@ -15,4 +15,4 @@ The next step is for the right window to render the compiled text as HTML.
 
 ![screenshoot](images/screenshot.png)
 
-See https://scripta.io for the web app that this will be based on.
+See https://scripta.io for the web app that this work is based on.
