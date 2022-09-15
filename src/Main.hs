@@ -96,15 +96,6 @@ buildUI
 buildUI wenv model = widgetTree where
   sectionBgColor = wenv ^. L.theme . L.sectionColor
 
-  -- errorOverlay = alertMsg msg BooksCloseError where
-  --   msg = fromMaybe "" (model ^. errorMsg)
-
-  -- bookOverlay = alert BooksCloseDetails content where
-  --   content = maybe spacer bookDetail (model ^. selected)
-
-  -- searchOverlay = box content `styleBasic` [bgColor (darkGray & L.a .~ 0.8)] where
-  --   content = label "Searching" `styleBasic` [textSize 20, textColor black]
-
   searchForm = keystroke [("Enter", BooksSearch)] $ vstack [
       hstack [
         label "Query:",
