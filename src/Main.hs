@@ -46,11 +46,11 @@ buildUI wenv model = widgetTree where
 
   searchForm = keystroke [("Enter", BooksSearch)] $ vstack [
       hstack [
-        label "Query:",
+        label "File:",
         spacer,
         textField query `nodeKey` "query",
         spacer,
-        mainButton "Search" BooksSearch
+        mainButton "Open" BooksSearch
       ] `styleBasic` [bgColor sectionBgColor, padding 25]
     ]
 
