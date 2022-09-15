@@ -54,10 +54,6 @@ buildUI wenv model = widgetTree where
       ] `styleBasic` [bgColor sectionBgColor, padding 25]
     ]
 
-  countLabel = label caption `styleBasic` [padding 10] where
-    caption = "Books (" <> showt (length $ model ^. books) <> ")"
-
-  booksChanged wenv old new = old ^. books /= new ^. books
 
   widgetTree = zstack [
       vstack [
@@ -76,7 +72,7 @@ handleEvent sess wenv node model evt = case evt of
   BooksInit -> [SetFocusOnKey "query"]
   BooksSearch -> [
     Model $ model & searching .~ True,
-    Task $ searchBooks sess (model ^. query)
+    Task $ openFile sess (model ^. query)
     ]
   BooksSearchResult resp -> [
     Message "mainScroll" ScrollReset,
@@ -95,10 +91,10 @@ handleEvent sess wenv node model evt = case evt of
   BooksCloseDetails -> [Model $ model & selected .~ Nothing]
   BooksCloseError -> [Model $ model & errorMsg .~ Nothing]
 
-searchBooks :: Sess.Session -> Text -> IO BooksEvt
-searchBooks sess query = do
+openFile :: Sess.Session -> Text -> IO BooksEvt
+openFile sess query = do
   putStrLn . T.unpack $ "Searching: " <> query
-  contents <- TIO.readFile "files/hello.txt"
+  contents <- TIO.readFile $ T.unpack query
   putStrLn $ Compiler.Scripta.compileToHtmlString $ contents
     -- A Task requires returning an event, since in general you want to notify users about the result of the action
   result <- catchAny (fetch url) (return . Left . T.pack . show)
