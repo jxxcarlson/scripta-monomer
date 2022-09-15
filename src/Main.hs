@@ -21,6 +21,7 @@ import Data.Maybe
 import Data.Text (Text)
 import TextShow
 
+import qualified Data.Text.IO as TIO
 import qualified Data.Text as T
 import qualified Network.Wreq as W
 import qualified Network.Wreq.Session as Sess
@@ -29,6 +30,8 @@ import BookTypes
 import Monomer
 
 import qualified Monomer.Lens as L
+
+import Compiler.Scripta
 
 type BooksWenv = WidgetEnv BooksModel BooksEvt
 type BooksNode = WidgetNode BooksModel BooksEvt
@@ -95,6 +98,9 @@ handleEvent sess wenv node model evt = case evt of
 searchBooks :: Sess.Session -> Text -> IO BooksEvt
 searchBooks sess query = do
   putStrLn . T.unpack $ "Searching: " <> query
+  contents <- TIO.readFile "files/hello.txt"
+  putStrLn $ Compiler.Scripta.compileToHtmlString $ contents
+    -- A Task requires returning an event, since in general you want to notify users about the result of the action
   result <- catchAny (fetch url) (return . Left . T.pack . show)
 
   case result of
