@@ -26,7 +26,7 @@ import qualified Data.Text as T
 import qualified Network.Wreq as W
 import qualified Network.Wreq.Session as Sess
 
-import BookTypes
+import ScriptaTypes
 import Monomer
 
 import qualified Monomer.Lens as L
