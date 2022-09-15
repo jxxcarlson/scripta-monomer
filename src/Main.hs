@@ -50,14 +50,14 @@ buildUI wenv model = widgetTree where
         spacer,
         textField query `nodeKey` "query",
         spacer,
-        mainButton "Open!" ScriptaSearch
+        mainButton "Open" ScriptaSearch
       ] `styleBasic` [bgColor sectionBgColor, padding 25]
     ]
 
   sourceTextDisplay =  vstack [
         label "Source text:",
         spacer, 
-        textField sourceText `nodeKey` "query"
+        textArea sourceText `nodeKey` "sourceText"
       ]  
     
 
