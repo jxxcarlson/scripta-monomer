@@ -45,6 +45,9 @@ executable app
     , monomer
     , text
     , text-show
+    , aeson
+    , wreq
+    , extra
     , flow
     , megaparsec
     , containers

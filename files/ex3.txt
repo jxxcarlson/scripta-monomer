@@ -1,0 +1,19 @@
+| section 1
+Scripta Test
+
+This [i [b is]] a test.
+I repeat: [i a test].
+
+| section 2
+Math
+
+[i [bluelight Pythagoras sez:]] $a^2 + b^2 = c^2$.  [blue Cool!]
+
+|| equation
+\int_0^1 x^n dx = \frac{1}{n+1}
+
+$$
+\int_0^\infty e^{-x} dx = 1
+
+|| image width:600 position:center caption:Yellow bird
+https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCE2i4ctUkAD6x8p9EK2QyQobseDGta40fHg&usqp=CAU
