@@ -33,61 +33,6 @@ import qualified Monomer.Lens as L
 type BooksWenv = WidgetEnv BooksModel BooksEvt
 type BooksNode = WidgetNode BooksModel BooksEvt
 
-bookImage :: Maybe Int -> Text -> WidgetNode s BooksEvt
-bookImage imgId size = maybe filler coverImg imgId where
-  baseUrl = "http://covers.openlibrary.org/b/id/<id>-<size>.jpg"
-  imgUrl i = T.replace "<size>" size $ T.replace "<id>" (showt i) baseUrl
-  coverImg i = image_ (imgUrl i) [fitHeight, alignRight]
-
-bookRow :: BooksWenv -> Book -> BooksNode
-bookRow wenv b = row where
-  rowBgColor = wenv ^. L.theme . L.userColorMap . at "rowBgColor" . non def
-  publishYear = maybe "" showt (b ^. year)
-
-  rowContent b = hstack [
-      vstack [
-        label_ (b ^. title) [resizeFactor 1]
-          `styleBasic` [textFont "Medium", textSize 16],
-        spacer,
-        label_ (T.intercalate ", " (b ^. authors)) [resizeFactor 1]
-          `styleBasic` [textSize 14]
-      ],
-      filler,
-      vstack [
-        label publishYear `styleBasic` [width 50, textSize 14],
-        spacer
-      ],
-      bookImage (b ^. cover) "S" `styleBasic` [width 35]
-    ]
-
-  row = box_ cfg content `styleBasic` [padding 10, paddingT 0] where
-    cfg = [expandContent, onClick (BooksShowDetails b)]
-    content = rowContent b
-      `styleBasic` [height 80, padding 20, radius 5]
-      `styleHover` [bgColor rowBgColor, cursorIcon CursorHand]
-
-bookDetail :: Book -> WidgetNode s BooksEvt
-bookDetail b = content `styleBasic` [minWidth 500, paddingH 20] where
-  hasCover = isJust (b ^. cover)
-  publishYear = maybe "" showt (b ^. year)
-
-  shortLabel value = label value `styleBasic` [textFont "Medium", textTop]
-  longLabel value = label_ value [multiline, ellipsis, trimSpaces]
-
-  content = hstack . concat $ [[
-    vstack [
-      longLabel (b ^. title)
-        `styleBasic` [textSize 20, textFont "Medium"],
-      spacer,
-      longLabel (T.intercalate ", " (b ^. authors))
-        `styleBasic` [textSize 16],
-      spacer,
-      label publishYear
-        `styleBasic` [textSize 14]
-    ]],
-    [filler | hasCover],
-    [bookImage (b ^. cover) "M" `styleBasic` [width 200] | hasCover]
-    ]
 
 buildUI
   :: WidgetEnv BooksModel BooksEvt
