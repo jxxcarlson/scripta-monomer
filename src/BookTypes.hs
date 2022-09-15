@@ -59,9 +59,9 @@ data ScriptaEvt
   | ScriptaSearch
   | ScriptaSearchResult BookResp
   | ScriptaSearchError Text
-  | ScriptaShowDetails Book
-  | ScriptaCloseDetails
-  | ScriptaCloseError
+  -- | ScriptaShowDetails Book
+  -- | ScriptaCloseDetails
+  -- | ScriptaCloseError
   deriving (Eq, Show)
 
 makeLensesWith abbreviatedFields 'Book

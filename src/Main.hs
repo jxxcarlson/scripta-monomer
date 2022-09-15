@@ -79,17 +79,13 @@ handleEvent sess wenv node model evt = case evt of
     Model $ model
       & searching .~ False
       & errorMsg .~ Nothing
-      -- & books .~ resp ^. docs
     ]
   ScriptaSearchError msg -> [
     Model $ model
       & searching .~ False
       & errorMsg ?~ msg
-      -- & books .~ []
     ]
-  ScriptaShowDetails book -> [Model $ model & selected ?~ book]
-  ScriptaCloseDetails -> [Model $ model & selected .~ Nothing]
-  ScriptaCloseError -> [Model $ model & errorMsg .~ Nothing]
+
 
 openFile :: Sess.Session -> Text -> IO ScriptaEvt
 openFile sess query = do
