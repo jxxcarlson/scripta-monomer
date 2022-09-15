@@ -54,10 +54,19 @@ buildUI wenv model = widgetTree where
       ] `styleBasic` [bgColor sectionBgColor, padding 25]
     ]
 
+  sourceTextDisplay =  vstack [
+        label "Source text:",
+        spacer, 
+        textField sourceText `nodeKey` "query"
+      ]  
+    
+
 
   widgetTree = zstack [
       vstack [
-        searchForm
+        searchForm,
+        sourceTextDisplay
+
       ]
     ]
 
@@ -73,6 +82,7 @@ handleEvent sess wenv node model evt = case evt of
   ScriptaSearch -> [
     Model $ model & searching .~ True,
     Task $ openFile sess (model ^. query)
+    -- Model $ model & sourceText .~ "FOO BAR"
     ]
   ScriptaSearchResult -> [
     Message "mainScroll" ScrollReset,
@@ -85,9 +95,10 @@ handleEvent sess wenv node model evt = case evt of
       & searching .~ False
       & errorMsg ?~ msg
     ]
-  FileProcessed -> [
+  FileProcessed txt -> [
     Model $ model
       & searching .~ False
+      & sourceText .~ txt
     ]
 
 
@@ -97,7 +108,7 @@ openFile sess query = do
   contents <- TIO.readFile $ T.unpack ("files/" <> query)
   putStrLn $ Compiler.Scripta.compileToHtmlString $ contents
     -- A Task requires returning an event, since in general you want to notify users about the result of the action
-  return FileProcessed
+  return (FileProcessed contents)
   
 
 main :: IO ()
