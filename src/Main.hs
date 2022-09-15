@@ -123,14 +123,7 @@ buildUI wenv model = widgetTree where
   widgetTree = zstack [
       vstack [
         searchForm
-        -- countLabel,
-        -- box_ [mergeRequired booksChanged] $
-        --   vscroll (vstack (bookRow wenv <$> model ^. books)) `nodeKey` "mainScroll"
       ]
-      -- ,
-      -- errorOverlay `nodeVisible` isJust (model ^. errorMsg),
-      -- bookOverlay `nodeVisible` isJust (model ^. selected),
-      -- searchOverlay `nodeVisible` model ^. searching
     ]
 
 handleEvent
