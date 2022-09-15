@@ -1,9 +1,10 @@
-module Compiler.Scripta (compile, compileToHtmlString, compileToHtmlText) where
+module Compiler.Scripta (compile, compileToHtmlString, compileToHtmlText, compileToHtmlStrictText) where
 
 import Prelude
 
 import Data.Text
-import Data.Text.Internal.Lazy    
+import Data.Text.Internal.Lazy
+import Data.Text.Lazy    
 import Flow ((|>)) 
 
 import Compiler.Parser.PrimitiveBlock (PrimitiveBlock(..))
@@ -30,3 +31,10 @@ compileToHtmlString sourceText =
 compileToHtmlText :: Data.Text.Text -> Data.Text.Internal.Lazy.Text
 compileToHtmlText sourceText = 
   sourceText |> compile |> Compiler.Render.Block.renderToText 
+
+compileToHtmlStrictText :: Data.Text.Text -> Data.Text.Text
+compileToHtmlStrictText sourceText = 
+  sourceText |> compile |> Compiler.Render.Block.renderToText |>  Data.Text.Lazy.toStrict 
+
+
+ 

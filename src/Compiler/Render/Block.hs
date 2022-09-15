@@ -42,11 +42,6 @@ import Compiler.Parser.ExprBlock (ExprBlock(..), BlockType(..))
 import qualified Compiler.Parser.ExprBlock as Parser.ExprBlock
 import Compiler.Parser.Expr(Expr(..))
 
--- render :: [ExprBlock] -> String
--- render blocks = 
---  do
---    renderHtml $ toHtml $ Prelude.map render_ blocks 
-
 renderToHtml :: [ExprBlock] -> Html
 renderToHtml blocks = toHtml $ do
     H.docType

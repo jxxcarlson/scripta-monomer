@@ -60,12 +60,17 @@ buildUI wenv model = widgetTree where
         textArea sourceText `nodeKey` "sourceText"
       ]  
     
+  renderedTextDisplay =  vstack [
+         label "Rendered text:",
+         spacer, 
+         textArea renderedText `nodeKey` "renderedText"
+      ] 
 
 
   widgetTree = zstack [
       vstack [
         searchForm,
-        sourceTextDisplay
+        hstack [sourceTextDisplay, spacer, renderedTextDisplay]
 
       ]
     ]
@@ -95,20 +100,22 @@ handleEvent sess wenv node model evt = case evt of
       & searching .~ False
       & errorMsg ?~ msg
     ]
-  FileProcessed txt -> [
+  FileProcessed input output -> [
     Model $ model
       & searching .~ False
-      & sourceText .~ txt
+      & sourceText .~ input
+      & renderedText .~ output
     ]
 
 
-openFile :: Sess.Session -> Text -> IO ScriptaEvt
+openFile :: Sess.Session -> Data.Text.Text -> IO ScriptaEvt
 openFile sess query = do
   putStrLn . T.unpack $ "Searching: " <> query
   contents <- TIO.readFile $ T.unpack ("files/" <> query)
+  let renderedText = Compiler.Scripta.compileToHtmlStrictText contents
   putStrLn $ Compiler.Scripta.compileToHtmlString $ contents
     -- A Task requires returning an event, since in general you want to notify users about the result of the action
-  return (FileProcessed contents)
+  return (FileProcessed contents renderedText)
   
 
 main :: IO ()
@@ -124,7 +131,7 @@ main = do
       appFontDef "Medium" "./assets/fonts/Roboto-Medium.ttf",
       appInitEvent ScriptaInit
       ]
-    initModel = ScriptaModel "" False Nothing ""
+    initModel = ScriptaModel "" False Nothing "" ""
 
 
 
