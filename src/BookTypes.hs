@@ -5,7 +5,7 @@ License     : BSD-3-Clause (see the LICENSE file)
 Maintainer  : fjvallarino@gmail.com
 Stability   : experimental
 Portability : non-portable
-Types for the 'Books' example.
+Types for the 'Scripta' example.
 -}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
@@ -46,24 +46,24 @@ instance FromJSON BookResp where
     <$> b .: "docs"
     <*> b .: "numFound"
 
-data BooksModel = BooksModel {
+data ScriptaModel = ScriptaModel {
   _bkmQuery :: Text,
   _bmkSearching :: Bool,
   _bkmErrorMsg :: Maybe Text,
-  _bkmBooks :: [Book],
+  _bkmScripta :: [Book],
   _bmkSelected :: Maybe Book
 } deriving (Eq, Show)
 
-data BooksEvt
-  = BooksInit
-  | BooksSearch
-  | BooksSearchResult BookResp
-  | BooksSearchError Text
-  | BooksShowDetails Book
-  | BooksCloseDetails
-  | BooksCloseError
+data ScriptaEvt
+  = ScriptaInit
+  | ScriptaSearch
+  | ScriptaSearchResult BookResp
+  | ScriptaSearchError Text
+  | ScriptaShowDetails Book
+  | ScriptaCloseDetails
+  | ScriptaCloseError
   deriving (Eq, Show)
 
 makeLensesWith abbreviatedFields 'Book
 makeLensesWith abbreviatedFields 'BookResp
-makeLensesWith abbreviatedFields 'BooksModel
+makeLensesWith abbreviatedFields 'ScriptaModel

@@ -5,7 +5,7 @@ License     : BSD-3-Clause (see the LICENSE file)
 Maintainer  : fjvallarino@gmail.com
 Stability   : experimental
 Portability : non-portable
-Main module for the 'Books' example.
+Main module for the 'Scripta' example.
 -}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
@@ -33,24 +33,24 @@ import qualified Monomer.Lens as L
 
 import Compiler.Scripta
 
-type BooksWenv = WidgetEnv BooksModel BooksEvt
-type BooksNode = WidgetNode BooksModel BooksEvt
+type ScriptaWenv = WidgetEnv ScriptaModel ScriptaEvt
+type ScriptaNode = WidgetNode ScriptaModel ScriptaEvt
 
 
 buildUI
-  :: WidgetEnv BooksModel BooksEvt
-  -> BooksModel
-  -> WidgetNode BooksModel BooksEvt
+  :: WidgetEnv ScriptaModel ScriptaEvt
+  -> ScriptaModel
+  -> WidgetNode ScriptaModel ScriptaEvt
 buildUI wenv model = widgetTree where
   sectionBgColor = wenv ^. L.theme . L.sectionColor
 
-  searchForm = keystroke [("Enter", BooksSearch)] $ vstack [
+  searchForm = keystroke [("Enter", ScriptaSearch)] $ vstack [
       hstack [
         label "File:",
         spacer,
         textField query `nodeKey` "query",
         spacer,
-        mainButton "Open" BooksSearch
+        mainButton "Open" ScriptaSearch
       ] `styleBasic` [bgColor sectionBgColor, padding 25]
     ]
 
@@ -63,35 +63,35 @@ buildUI wenv model = widgetTree where
 
 handleEvent
   :: Sess.Session
-  -> WidgetEnv BooksModel BooksEvt
-  -> WidgetNode BooksModel BooksEvt
-  -> BooksModel
-  -> BooksEvt
-  -> [EventResponse BooksModel BooksEvt BooksModel ()]
+  -> WidgetEnv ScriptaModel ScriptaEvt
+  -> WidgetNode ScriptaModel ScriptaEvt
+  -> ScriptaModel
+  -> ScriptaEvt
+  -> [EventResponse ScriptaModel ScriptaEvt ScriptaModel ()]
 handleEvent sess wenv node model evt = case evt of
-  BooksInit -> [SetFocusOnKey "query"]
-  BooksSearch -> [
+  ScriptaInit -> [SetFocusOnKey "query"]
+  ScriptaSearch -> [
     Model $ model & searching .~ True,
     Task $ openFile sess (model ^. query)
     ]
-  BooksSearchResult resp -> [
+  ScriptaSearchResult resp -> [
     Message "mainScroll" ScrollReset,
     Model $ model
       & searching .~ False
       & errorMsg .~ Nothing
-      & books .~ resp ^. docs
+      -- & books .~ resp ^. docs
     ]
-  BooksSearchError msg -> [
+  ScriptaSearchError msg -> [
     Model $ model
       & searching .~ False
       & errorMsg ?~ msg
-      & books .~ []
+      -- & books .~ []
     ]
-  BooksShowDetails book -> [Model $ model & selected ?~ book]
-  BooksCloseDetails -> [Model $ model & selected .~ Nothing]
-  BooksCloseError -> [Model $ model & errorMsg .~ Nothing]
+  ScriptaShowDetails book -> [Model $ model & selected ?~ book]
+  ScriptaCloseDetails -> [Model $ model & selected .~ Nothing]
+  ScriptaCloseError -> [Model $ model & errorMsg .~ Nothing]
 
-openFile :: Sess.Session -> Text -> IO BooksEvt
+openFile :: Sess.Session -> Text -> IO ScriptaEvt
 openFile sess query = do
   putStrLn . T.unpack $ "Searching: " <> query
   contents <- TIO.readFile $ T.unpack query
@@ -100,8 +100,8 @@ openFile sess query = do
   result <- catchAny (fetch url) (return . Left . T.pack . show)
 
   case result of
-    Right resp -> return (BooksSearchResult resp)
-    Left err -> return (BooksSearchError err)
+    Right resp -> return (ScriptaSearchResult resp)
+    Left err -> return (ScriptaSearchError err)
   where
     url = "https://openlibrary.org/search.json?q=" <> T.unpack query
     checkEmpty resp
@@ -125,9 +125,9 @@ main = do
       appTheme customDarkTheme,
       appFontDef "Regular" "./assets/fonts/Roboto-Regular.ttf",
       appFontDef "Medium" "./assets/fonts/Roboto-Medium.ttf",
-      appInitEvent BooksInit
+      appInitEvent ScriptaInit
       ]
-    initModel = BooksModel "" False Nothing [] Nothing
+    initModel = ScriptaModel "" False Nothing [] Nothing
 
 customLightTheme :: Theme
 customLightTheme = lightTheme
