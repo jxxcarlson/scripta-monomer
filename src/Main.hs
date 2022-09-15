@@ -50,7 +50,7 @@ buildUI wenv model = widgetTree where
         spacer,
         textField query `nodeKey` "query",
         spacer,
-        mainButton "Open" ScriptaSearch
+        mainButton "Open!" ScriptaSearch
       ] `styleBasic` [bgColor sectionBgColor, padding 25]
     ]
 
@@ -74,7 +74,7 @@ handleEvent sess wenv node model evt = case evt of
     Model $ model & searching .~ True,
     Task $ openFile sess (model ^. query)
     ]
-  ScriptaSearchResult resp -> [
+  ScriptaSearchResult -> [
     Message "mainScroll" ScrollReset,
     Model $ model
       & searching .~ False
@@ -85,30 +85,20 @@ handleEvent sess wenv node model evt = case evt of
       & searching .~ False
       & errorMsg ?~ msg
     ]
+  FileProcessed -> [
+    Model $ model
+      & searching .~ False
+    ]
 
 
 openFile :: Sess.Session -> Text -> IO ScriptaEvt
 openFile sess query = do
   putStrLn . T.unpack $ "Searching: " <> query
-  contents <- TIO.readFile $ T.unpack query
+  contents <- TIO.readFile $ T.unpack ("files/" <> query)
   putStrLn $ Compiler.Scripta.compileToHtmlString $ contents
     -- A Task requires returning an event, since in general you want to notify users about the result of the action
-  result <- catchAny (fetch url) (return . Left . T.pack . show)
-
-  case result of
-    Right resp -> return (ScriptaSearchResult resp)
-    Left err -> return (ScriptaSearchError err)
-  where
-    url = "https://openlibrary.org/search.json?q=" <> T.unpack query
-    checkEmpty resp
-      | null (resp ^. docs) = Nothing
-      | otherwise = Just resp
-    fetch url = do
-      resp <- Sess.get sess url
-        >>= W.asJSON
-        >>= return . preview (W.responseBody . _Just)
-
-      return $ maybeToEither "Empty response" (resp >>= checkEmpty)
+  return FileProcessed
+  
 
 main :: IO ()
 main = do
@@ -123,7 +113,9 @@ main = do
       appFontDef "Medium" "./assets/fonts/Roboto-Medium.ttf",
       appInitEvent ScriptaInit
       ]
-    initModel = ScriptaModel "" False Nothing [] Nothing
+    initModel = ScriptaModel "" False Nothing ""
+
+
 
 customLightTheme :: Theme
 customLightTheme = lightTheme
